@@ -1,0 +1,91 @@
+[00:00:02.694] Server  LOG      ✓ Ready in 2s
+[00:00:05.934] Server  LOG      ○ Compiling / ...
+[00:00:14.590] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:17.016] Server  LOG     ✅ MongoDB connected: undefined
+[00:00:18.179] Server  LOG     ✅ MongoDB connected: "ac-jbnktmx-shard-00-00.w3s6ah0.mongodb.net"
+[00:00:49.986] Browser ERROR   Error adding reply: Comment not found
+[00:01:52.914] Server  LOG     ✅ MongoDB connected: "ac-jbnktmx-shard-00-00.w3s6ah0.mongodb.net"
+[00:01:53.212] Browser ERROR   Error adding reply: Comment not found
+[00:02:16.894] Server  LOG     ✅ MongoDB connected: "ac-jbnktmx-shard-00-00.w3s6ah0.mongodb.net"
+[00:02:17.062] Browser ERROR   Error adding reply: Comment not found
+[00:02:38.670] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:46.242] Browser ERROR   Error adding reply: Comment not found
+[00:02:48.257] Browser ERROR   Error adding reply: Comment not found
+[00:05:17.061] Browser ERROR   Error adding reply: Comment not found
+[00:07:00.644] Server  LOG      ✓ Compiled in 841ms
+[00:08:41.925] Server  LOG      ✓ Compiled in 84ms
+[00:08:47.368] Server  ERROR   Error adding reply: ValidationError: replies.2.author: Path `author` is required.
+[00:08:47.489] Browser ERROR   Error adding reply: Internal Server Error
+[00:08:50.415] Server  ERROR   Error adding reply: ValidationError: replies.2.author: Path `author` is required.
+[00:08:50.530] Browser ERROR   Error adding reply: Internal Server Error
+[00:09:46.036] Server  LOG     ✅ MongoDB connected: "ac-jbnktmx-shard-00-00.w3s6ah0.mongodb.net"
+[00:09:46.187] Browser ERROR   Error adding reply: Missing required fields
+[00:09:47.875] Browser ERROR   Error adding reply: Missing required fields
+[00:09:48.712] Browser ERROR   Error adding reply: Missing required fields
+[00:09:49.283] Browser ERROR   Error adding reply: Missing required fields
+[00:09:49.455] Browser ERROR   Error adding reply: Missing required fields
+[00:09:49.615] Browser ERROR   Error adding reply: Missing required fields
+[00:09:49.758] Browser ERROR   Error adding reply: Missing required fields
+[00:09:49.919] Browser ERROR   Error adding reply: Missing required fields
+[00:09:50.076] Browser ERROR   Error adding reply: Missing required fields
+[00:12:43.207] Server  LOG      ✓ Compiled in 173ms
+[00:15:07.970] Server  LOG      ✓ Compiled in 336ms
+[00:15:08.733] Server  LOG     ✅ MongoDB connected: "ac-jbnktmx-shard-00-00.w3s6ah0.mongodb.net"
+[00:17:13.305] Server  LOG      ✓ Compiled in 1764ms
+[00:17:43.109] Server  LOG      ✓ Compiled in 225ms
+[00:18:20.884] Server  LOG      ✓ Compiled in 553ms
+[00:18:22.723] Server  LOG      ✓ Compiled in 293ms
+[00:18:37.396] Server  LOG      ✓ Compiled in 332ms
+[00:19:39.202] Server  LOG      ✓ Compiled in 204ms
+[00:19:39.967] Browser ERROR   ./components/Sidebar-left.tsx:138:7
+Parsing ecmascript source code failed
+  136 | >
+  137 |
+> 138 |     </>
+      |       ^
+  139 |   );
+  140 | };
+  141 |
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./components/Sidebar-left.tsx
+    ./app/page.tsx
+[00:19:42.024] Server  LOG      ✓ Compiled in 240ms
+[00:19:47.121] Server  LOG      ✓ Compiled in 233ms
+[00:19:58.899] Server  LOG      ✓ Compiled in 227ms
+[00:20:09.920] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:28.677] Server  LOG      ✓ Compiled in 2s
+[00:22:22.973] Server  LOG      ✓ Compiled in 509ms
+[00:23:36.986] Server  LOG      ✓ Compiled in 494ms
+[00:24:03.726] Server  LOG      ✓ Compiled in 137ms
+[00:25:37.660] Server  LOG      ✓ Compiled in 210ms
+[00:26:50.977] Server  LOG      ✓ Compiled in 961ms
+[00:28:00.874] Server  LOG      ✓ Compiled in 197ms
+[00:28:14.978] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:28:56.725] Server  LOG      ✓ Compiled in 184ms
+[00:34:48.509] Server  LOG      ✓ Compiled in 437ms
+[00:34:49.889] Server  LOG      ✓ Compiled in 233ms
+[00:34:53.192] Server  LOG      ✓ Compiled in 390ms
+[00:35:26.539] Server  LOG      ✓ Compiled in 475ms
+[00:35:32.612] Server  LOG      ✓ Compiled in 109ms
+[00:35:48.062] Server  LOG      ✓ Compiled in 138ms
+[00:35:52.020] Server  LOG      ✓ Compiled in 162ms
+[00:35:54.451] Server  LOG      ✓ Compiled in 268ms
+[00:36:32.122] Server  LOG      ✓ Compiled in 343ms
+[00:36:57.033] Server  LOG      ✓ Compiled in 93ms
+[00:37:22.974] Server  LOG      ✓ Compiled in 212ms
+[00:37:27.240] Server  LOG      ✓ Compiled in 164ms
+[00:38:11.095] Server  LOG      ✓ Compiled in 388ms
+[00:38:30.739] Server  LOG      ✓ Compiled in 181ms
+[00:39:04.057] Server  LOG      ✓ Compiled in 1639ms
+[00:39:23.045] Server  LOG      ✓ Compiled in 350ms
+[00:41:29.820] Server  LOG      ✓ Compiled in 1319ms
+[00:41:30.073] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./components/Sidebar-right.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:41:36.597] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:41:58.448] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./components/Sidebar-right.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:41:58.465] Server  LOG      ✓ Compiled in 329ms
+[00:42:01.936] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:43:25.385] Server  LOG      ✓ Compiled in 1307ms

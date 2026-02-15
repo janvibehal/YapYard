@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import SidebarLeft from "../components/Sidebars/Sidebar-left";
 import SidebarRight from "../components/Sidebars/Sidebar-right";
 import MiddleContent from "../components/posts/MiddleContent";
 import Navbar from "../components/navigation/Navbar";
 
 export default function Home() {
+
+  const [collapsed, setCollapsed] = useState(false);
 
   const hideScrollbar = {
     scrollbarWidth: "none" as const,
@@ -23,14 +26,14 @@ export default function Home() {
 
         {/* LEFT SIDEBAR */}
         <div
-          className="hidden md:block sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden"
+          className="hidden md:block sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden transition-all duration-300"
           style={hideScrollbar}
         >
-          <SidebarLeft />
+          <SidebarLeft collapsed={collapsed} setCollapsed={setCollapsed} />
         </div>
 
         {/* CONTENT AREA */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0 transition-all duration-300">
           <MiddleContent />
         </div>
 

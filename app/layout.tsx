@@ -2,6 +2,7 @@ import './globals.css';
 import { ReactNode } from 'react';
 import { AuthProvider } from '../context/AuthContext';
 import ClientWrapper from '../components/animations/homepage/ClientWrapper';
+import MessagingWrapper from '../components/MessagingWrapper';
 
 export const metadata = {
   title: 'DZINR App',
@@ -16,7 +17,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <ClientWrapper>
             {children}
           </ClientWrapper>
+          <MessagingWrapper />
+
         </AuthProvider>
+        
+
       </body>
     </html>
   );

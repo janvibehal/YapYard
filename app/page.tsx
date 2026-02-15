@@ -29,7 +29,7 @@ export default function Home() {
           className="hidden md:block sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden transition-all duration-300"
           style={hideScrollbar}
         >
-          <SidebarLeft collapsed={collapsed} setCollapsed={setCollapsed} />
+          <SidebarLeft/>
         </div>
 
         {/* CONTENT AREA */}

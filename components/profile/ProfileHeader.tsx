@@ -1,66 +1,31 @@
 "use client";
 
-export default function ProfileHeader({ user, postsCount }: any) {
-  return (
-    <section className="bg-[#111] rounded-2xl border border-white/10 overflow-hidden">
-
-      <div className="h-40 bg-gradient-to-r from-orange-500/40 to-purple-600/40" />
-
-      <div className="px-6 pb-6">
-        <div className="-mt-12 flex items-end gap-4">
-
-          <img
-            src={user.avatarUrl}
-            className="w-24 h-24 rounded-full border-4 border-black object-cover"
-          />
-
-          <div>
-            <h1 className="text-2xl font-bold">{user.name}</h1>
-            <p className="text-gray-400 text-sm">@{user.username}</p>
-          </div>
-        </div>
-
-        <p className="mt-4 text-gray-300 max-w-xl">
-          {user.bio || "No bio added yet."}
-        </p>
-
-        <div className="flex gap-6 mt-4 text-sm">
-          <span><b>{postsCount}</b> Posts</span>
-          <span><b>{user.followersCount || 0}</b> Followers</span>
-          <span><b>{user.followingCount || 0}</b> Following</span>
-        </div>
-
-      </div>
-    </section>
 import { useAuth } from "@/context/AuthContext";
 import { useState, useEffect } from "react";
 
 export default function ProfileHeader({
   profile,
   userId,
+  postsCount,
   refreshProfile,
+  onEdit,
 }: any) {
   const { user } = useAuth();
 
   const [following, setFollowing] = useState(false);
   const [loadingFollow, setLoadingFollow] = useState(false);
 
-  // ⭐ AUTO SYNC FOLLOW STATE FROM PROFILE DATA
+  // Sync follow state
   useEffect(() => {
     if (!profile || !user) return;
-
     const isFollowing = profile.followers?.includes(user._id);
-
     setFollowing(isFollowing);
   }, [profile, user]);
 
-  // ⭐ FOLLOW / UNFOLLOW HANDLER
+  // Follow / unfollow handler
   const handleFollow = async () => {
     try {
-      if (!user?.token) {
-        console.log("NO TOKEN AVAILABLE");
-        return;
-      }
+      if (!user?.token) return;
 
       setLoadingFollow(true);
 
@@ -72,61 +37,73 @@ export default function ProfileHeader({
       });
 
       const data = await res.json();
+      if (!res.ok) throw new Error("Follow failed");
 
-      console.log("FOLLOW RESPONSE:", data);
-
-      if (!res.ok) {
-        throw new Error("Follow failed");
-      }
-
-      // update button immediately
       setFollowing(data.following);
-
-      // refresh profile (updates followers count)
       refreshProfile?.();
     } catch (err) {
-      console.error("❌ Follow error:", err);
+      console.error("Follow error:", err);
     } finally {
       setLoadingFollow(false);
     }
   };
 
   return (
-    <div className="bg-[#111] rounded-xl p-6">
-      <div className="flex items-center gap-4">
-        <img
-          src={
-            profile?.avatarUrl || `https://picsum.photos/100?random=${userId}`
-          }
-          className="w-20 h-20 rounded-full object-cover"
-        />
+    <section className="bg-[#111] rounded-2xl border border-white/10 overflow-hidden">
 
-        <div>
-          {/* NAME */}
-          <h1 className="text-xl font-semibold">{profile?.name}</h1>
+      {/* COVER */}
+      <div className="h-48 bg-gradient-to-r from-orange-500/30 via-purple-500/30 to-pink-500/30" />
 
-          {/* BIO */}
-          <p className="text-gray-400 text-sm">
-            {profile?.bio || "No bio yet"}
-          </p>
+      <div className="px-6 pb-6">
 
-          {/* FOLLOW + MESSAGE BUTTONS */}
-          {user?._id !== userId && (
-            <div className="flex gap-3 mt-3">
-              {/* FOLLOW BUTTON */}
+        {/* AVATAR + ACTIONS */}
+        <div className="flex justify-between items-end -mt-16">
+
+          <div className="flex items-end gap-5">
+            <img
+              src={
+                profile?.avatarUrl ||
+                `https://picsum.photos/200?random=${userId}`
+              }
+              className="w-32 h-32 rounded-full border-4 border-black object-cover shadow-lg"
+            />
+
+            <div className="mb-3">
+              <h1 className="text-2xl font-bold">{profile?.name}</h1>
+              <p className="text-gray-400">@{profile?.username || profile?.email?.split("@")[0] || "user"}</p>
+            </div>
+          </div>
+
+          {/* BUTTONS */}
+          <div className="flex gap-3 mb-3">
+
+            {/* EDIT PROFILE */}
+            {user?._id === userId && (
+              <button
+                onClick={onEdit}
+                className="border border-white/20 px-5 py-2 rounded-lg hover:bg-white/10 transition"
+              >
+                Edit Profile
+              </button>
+            )}
+
+            {/* FOLLOW */}
+            {user?._id !== userId && (
               <button
                 onClick={handleFollow}
                 disabled={loadingFollow}
-                className="bg-orange-500 px-4 py-2 rounded-lg"
+                className="bg-orange-500 px-5 py-2 rounded-lg hover:bg-orange-600 transition"
               >
                 {loadingFollow
                   ? "Loading..."
                   : following
-                    ? "Following"
-                    : "Follow"}
+                  ? "Following"
+                  : "Follow"}
               </button>
+            )}
 
-              {/* MESSAGE BUTTON */}
+            {/* MESSAGE */}
+            {user?._id !== userId && (
               <button
                 onClick={async () => {
                   if (!user?.token) return;
@@ -140,10 +117,7 @@ export default function ProfileHeader({
                     body: JSON.stringify({ otherUserId: userId }),
                   });
 
-                  const data = await res.json();
-
                   if (res.ok) {
-                    // ⭐ trigger global messaging open
                     window.dispatchEvent(
                       new CustomEvent("openChat", {
                         detail: {
@@ -151,20 +125,49 @@ export default function ProfileHeader({
                           name: profile?.name,
                           profilePicture: profile?.avatarUrl,
                         },
-                      }),
+                      })
                     );
                   } else {
                     alert("You must follow each other to message");
                   }
                 }}
-                className="border border-white/20 px-4 py-2 rounded-lg"
+                className="border border-white/20 px-5 py-2 rounded-lg hover:bg-white/10 transition"
               >
                 Message
               </button>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+
+        {/* BIO */}
+        <p className="mt-5 text-gray-300 max-w-2xl">
+          {profile?.bio || "This user hasn't added a bio yet."}
+        </p>
+
+        {/* STATS */}
+        <div className="flex gap-10 mt-6">
+
+          <div>
+            <p className="text-lg font-semibold">{postsCount || 0}</p>
+            <p className="text-gray-400 text-sm">Posts</p>
+          </div>
+
+          <div>
+            <p className="text-lg font-semibold">
+              {profile?.followers?.length || 0}
+            </p>
+            <p className="text-gray-400 text-sm">Followers</p>
+          </div>
+
+          <div>
+            <p className="text-lg font-semibold">
+              {profile?.following?.length || 0}
+            </p>
+            <p className="text-gray-400 text-sm">Following</p>
+          </div>
+
         </div>
       </div>
-    </div>
+    </section>
   );
 }

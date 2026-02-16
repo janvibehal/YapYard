@@ -1,61 +1,89 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function EditProfileModal({ user, onClose, onUpdated }) {
-  const [name, setName] = useState(user.name);
-  const [bio, setBio] = useState(user.bio || "");
-  const [loading, setLoading] = useState(false);
+export default function EditProfileModal({ profile, onClose, onSave }: any) {
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
+
+  // ✅ Load profile safely when modal opens
+  useEffect(() => {
+    if (!profile) return;
+
+    setName(profile.name || "");
+    setUsername(profile.username || "");
+    setBio(profile.bio || "");
+  }, [profile]);
 
   const handleSave = async () => {
-    setLoading(true);
-
     try {
-      const res = await fetch("/api/users/update", {
+      const res = await fetch(`/api/users/${profile._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, bio }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, username, bio }),
       });
 
-      const updated = await res.json();
-      onUpdated(updated);
-      onClose();
+      const data = await res.json();
 
+      if (!res.ok) throw new Error("Update failed");
+
+      onSave(data);
     } catch (err) {
       console.error(err);
+      alert("Failed to update profile");
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex justify-center items-center">
-      <div className="bg-zinc-900 p-6 rounded-lg w-96 space-y-4">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div className="bg-[#111] p-6 rounded-xl w-full max-w-md space-y-4">
+
         <h2 className="text-xl font-bold">Edit Profile</h2>
 
+        {/* NAME */}
         <input
-          className="w-full p-2 bg-zinc-800 rounded"
+          className="w-full bg-black border border-white/20 p-3 rounded-lg"
+          placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
         />
 
+        {/* USERNAME */}
+        <input
+          className="w-full bg-black border border-white/20 p-3 rounded-lg"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+
+        {/* BIO */}
         <textarea
-          className="w-full p-2 bg-zinc-800 rounded"
+          className="w-full bg-black border border-white/20 p-3 rounded-lg"
+          placeholder="Bio"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
-          placeholder="Bio"
         />
 
-        <div className="flex justify-end gap-3">
-          <button onClick={onClose}>Cancel</button>
+        {/* ACTIONS */}
+        <div className="flex justify-end gap-3 pt-3">
+          <button
+            onClick={onClose}
+            className="border border-white/20 px-4 py-2 rounded-lg"
+          >
+            Cancel
+          </button>
+
           <button
             onClick={handleSave}
-            className="bg-blue-600 px-4 py-2 rounded"
+            className="bg-orange-500 px-4 py-2 rounded-lg"
           >
-            {loading ? "Saving..." : "Save"}
+            Save
           </button>
         </div>
+
       </div>
     </div>
   );

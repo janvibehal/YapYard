@@ -6,6 +6,32 @@ import MessagePopup from "./MessagePopup";
 import ChatWindow from "./ChatWindow";
 import { useAuth } from "@/context/AuthContext";
 
+const panelAnimationStyle = `
+  @keyframes panelIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @keyframes panelOut {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+    }
+  }
+  .panel-in {
+    animation: panelIn 0.2s ease-out forwards;
+  }
+`;
+
 interface Conversation {
   _id: string;
   otherUser: {
@@ -74,7 +100,7 @@ export default function ConversationsList({
 
     const interval = setInterval(() => {
       fetchConversations();
-    }, 2000); // polling every 2 sec
+    }, 2000);// polling every 2 sec
 
     return () => clearInterval(interval);
   }, [isOpen, user?.token]);
@@ -85,7 +111,7 @@ export default function ConversationsList({
       const chatUser = e.detail;
 
       setIsOpen(true); // open messaging panel
-      setSelectedUser(chatUser); // open chat window
+      setSelectedUser(chatUser);// open chat window
     };
 
     window.addEventListener("openChat", handler);
@@ -108,6 +134,8 @@ export default function ConversationsList({
 
   return (
     <>
+      <style>{panelAnimationStyle}</style>
+
       {/* FLOAT BUTTON */}
       {!isOpen && (
         <button
@@ -126,7 +154,7 @@ export default function ConversationsList({
       {/* PANEL */}
       {isOpen && (
         <div
-          className={`fixed bottom-6 right-6 w-[400px] ${
+          className={`panel-in fixed bottom-6 right-6 w-[400px] ${
             isMinimized ? "h-14" : "h-[600px]"
           } bg-[#0c0c0c] backdrop-blur-xl text-white rounded-xl shadow-2xl border border-white/10 z-50 overflow-hidden flex flex-col`}
         >

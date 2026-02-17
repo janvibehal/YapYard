@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { X, Send, MessageCircle, Minimize2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -36,7 +36,7 @@ export default function MessagePopup({
   currentUserId,
   onClose,
 }: MessagePopupProps) {
-  const { user } = useAuth(); // ✅ FIX: user is now defined
+  const { user } = useAuth();// ✅ FIX: user is now defined
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -45,33 +45,19 @@ export default function MessagePopup({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  /* =========================
-     SCROLL TO BOTTOM
-  ========================= */
+  // ⭐ AUTO SCROLL
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* =========================
-     FETCH MESSAGES
-  ========================= */
-  useEffect(() => {
-    if (!user?.token) return;
-    fetchMessages();
-  }, [otherUser._id, user]);
-
-  const fetchMessages = async () => {
+  // ⭐ FETCH MESSAGES — stable reference
+  const fetchMessages = useCallback(async () => {
     if (!user?.token) return;
 
     try {
-      const response = await fetch(
-        `/api/messages?userId=${otherUser._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
+      const response = await fetch(`/api/messages?userId=${otherUser._id}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -80,11 +66,21 @@ export default function MessagePopup({
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
-  };
+  }, [otherUser._id, user?.token]);
 
-  /* =========================
-     SEND MESSAGE
-  ========================= */
+  // ⭐ Initial fetch
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages]);
+
+  // ⭐ POLLING — keeps popup live without manual refresh
+  useEffect(() => {
+    if (!user?.token || isMinimized) return;
+    const interval = setInterval(fetchMessages, 2000);
+    return () => clearInterval(interval);
+  }, [fetchMessages, user?.token, isMinimized]);
+
+  // ⭐ SEND MESSAGE
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || loading || !user?.token) return;
@@ -105,9 +101,9 @@ export default function MessagePopup({
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setMessages((prev) => [...prev, data.message]);
         setNewMessage("");
+        // Immediately refresh to show the sent message
+        fetchMessages();
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -116,9 +112,6 @@ export default function MessagePopup({
     }
   };
 
-  /* =========================
-     NOT LOGGED IN
-  ========================= */
   if (!user) {
     return (
       <div className="fixed bottom-4 right-4 bg-black/80 text-white px-4 py-2 rounded-lg">
@@ -127,13 +120,12 @@ export default function MessagePopup({
     );
   }
 
-  /* =========================
-     MINIMIZED VIEW
-  ========================= */
   if (isMinimized) {
     return (
       <div
-        className="fixed bottom-4 right-4 bg-orange-600 text-white px-4 py-2 rounded-full shadow-lg cursor-pointer hover:bg-orange-700 transition-all flex items-center gap-2 z-50"
+        className="fixed bottom-4 right-4 bg-orange-600 text-white px-4 py-2
+          rounded-full shadow-lg cursor-pointer hover:bg-orange-700 transition-all
+          flex items-center gap-2 z-50"
         onClick={() => setIsMinimized(false)}
       >
         <MessageCircle size={20} />
@@ -143,7 +135,8 @@ export default function MessagePopup({
   }
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 h-[500px] bg-white rounded-lg shadow-2xl flex flex-col border border-gray-200 z-50">
+    <div className="fixed bottom-4 right-4 w-96 h-[500px] bg-white rounded-lg
+      shadow-2xl flex flex-col border border-gray-200 z-50">
 
       {/* HEADER */}
       <div className="border-b border-gray-200 p-4 flex items-center justify-between">
@@ -160,25 +153,21 @@ export default function MessagePopup({
             </div>
           )}
           <div>
-            <h3 className="font-semibold text-gray-900">
-              {otherUser.name}
-            </h3>
-            <p className="text-xs text-green-600 font-medium">
-              Active now
-            </p>
+            <h3 className="font-semibold text-gray-900">{otherUser.name}</h3>
+            <p className="text-xs text-green-600 font-medium">Active now</p>
           </div>
         </div>
 
         <div className="flex gap-2">
           <button
             onClick={() => setIsMinimized(true)}
-            className="hover:bg-gray-100 p-2 rounded-full"
+            className="hover:bg-gray-100 p-2 rounded-full transition-colors"
           >
             <Minimize2 size={18} />
           </button>
           <button
             onClick={onClose}
-            className="hover:bg-gray-100 p-2 rounded-full"
+            className="hover:bg-gray-100 p-2 rounded-full transition-colors"
           >
             <X size={18} />
           </button>
@@ -194,15 +183,17 @@ export default function MessagePopup({
           </div>
         ) : (
           messages.map((message) => {
-            const isCurrentUser =
-              message.sender._id === currentUserId;
+            // ⭐ FIX: sender may be populated object or raw ID string
+            const senderId =
+              typeof message.sender === "object"
+                ? message.sender._id
+                : message.sender;
+            const isCurrentUser = String(senderId) === String(currentUserId);
 
             return (
               <div
                 key={message._id}
-                className={`flex ${
-                  isCurrentUser ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
               >
                 <div
                   className={`max-w-[75%] px-4 py-2 rounded-2xl ${
@@ -213,10 +204,10 @@ export default function MessagePopup({
                 >
                   <p className="text-sm">{message.content}</p>
                   <p className="text-xs mt-1 opacity-70">
-                    {new Date(message.createdAt).toLocaleTimeString(
-                      [],
-                      { hour: "2-digit", minute: "2-digit" }
-                    )}
+                    {new Date(message.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
                 </div>
               </div>
@@ -227,23 +218,22 @@ export default function MessagePopup({
       </div>
 
       {/* INPUT */}
-      <form
-        onSubmit={sendMessage}
-        className="p-4 border-t border-gray-200"
-      >
+      <form onSubmit={sendMessage} className="p-4 border-t border-gray-200">
         <div className="flex gap-2">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-2 border rounded-full focus:outline-none"
+            className="flex-1 px-4 py-2 border rounded-full focus:outline-none
+              focus:border-orange-400 transition-colors"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={loading || !newMessage.trim()}
-            className="bg-orange-500 text-white p-3 rounded-full disabled:opacity-50"
+            className="bg-orange-500 text-white p-3 rounded-full
+              disabled:opacity-50 hover:bg-orange-600 transition-colors"
           >
             <Send size={20} />
           </button>

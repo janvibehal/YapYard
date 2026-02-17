@@ -4,6 +4,22 @@ import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
+const messageAnimationStyle = `
+  @keyframes messageIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .message-in {
+    animation: messageIn 0.2s ease-out forwards;
+  }
+`;
+
 export default function ChatWindow({
   selectedUser,
   onBack,
@@ -107,6 +123,8 @@ export default function ChatWindow({
 
     <div className="w-full h-full flex flex-col bg-[#0c0c0c]">
 
+      <style>{messageAnimationStyle}</style>
+
       {/* HEADER */}
       <div className="flex items-center gap-3 p-4 border-b border-white/10">
 
@@ -124,7 +142,7 @@ export default function ChatWindow({
       </div>
 
       {/* MESSAGE LIST */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
         {messages.map((msg, index) => {
 
@@ -139,9 +157,10 @@ export default function ChatWindow({
 
             <div
               key={msg._id || index}
-              className="w-full flex"
+              className="w-full flex message-in"
               style={{
                 justifyContent: isMe ? "flex-end" : "flex-start",
+                animationDelay: "0ms",
               }}
             >
 

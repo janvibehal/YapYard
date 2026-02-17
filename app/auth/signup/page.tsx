@@ -75,6 +75,13 @@ export default function SignupPage() {
   } | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Orange button unlocks only when every field has content
+  const formComplete =
+    name.trim() !== "" &&
+    email.trim() !== "" &&
+    password !== "" &&
+    confirmPassword !== "";
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -169,11 +176,16 @@ export default function SignupPage() {
             />
 
             <div className="flex gap-4">
+              {/* Sign up — orange when all fields filled, muted otherwise */}
               <button
                 type="submit"
-                disabled={loading}
-                className="flex-1 py-3 px-4 bg-white/20 backdrop-blur-md border border-white/30
-                         text-white font-medium rounded-xl hover:bg-white/30 transition"
+                disabled={!formComplete || loading}
+                className={`flex-1 py-3 px-4 font-medium rounded-xl text-white transition-all duration-300
+                  ${
+                    formComplete
+                      ? "bg-orange-500 border border-orange-400 hover:bg-orange-400 shadow-[0_0_18px_rgba(249,115,22,0.45)] hover:shadow-[0_0_26px_rgba(249,115,22,0.6)] cursor-pointer"
+                      : "bg-white/20 backdrop-blur-md border border-white/30 opacity-50 cursor-not-allowed"
+                  }`}
               >
                 {loading ? "Signing up..." : "Sign up"}
               </button>

@@ -72,12 +72,10 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-14">
 
           {/* LOGO */}
-          <div
-            className="text-white font-bold text-lg cursor-pointer"
-            onClick={() => router.push("/")}
-          >
-            LOGO
+          <div className="cursor-pointer flex flex-col items-center justify-center h-full" onClick={() => router.push("/")}>
+            <img src="/YYmix.png" alt="YapYard logo" className="h-8 block" />
           </div>
+
 
           {/* DESKTOP SEARCH */}
           <div className="hidden md:flex flex-1 justify-center">
